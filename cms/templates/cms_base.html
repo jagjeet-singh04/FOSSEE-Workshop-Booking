@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title|title }}</title>
+    <link rel="stylesheet" href="{% static 'cms/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'workshop_app/css/base.css' %}" type="text/css"/>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 70px;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .base-content {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 2rem;
+        }
+        .dropdown-menu {
+            min-width: 180px;
+        }
+        @media (max-width: 576px) {
+            .base-content {
+                padding: 1rem;
+            }
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    <script src="{% static 'cms/js/jquery-3.4.1.slim.min.js' %}"></script>
+    <script src="{% static 'cms/js/popper.min.js' %}"></script>
+    {{ page.imports | safe }}
+    <script src="{% static 'cms/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <span class="material-icons me-2">school</span> FOSSEE Workshops
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                {% for nav in navs %}
+                    <li class="nav-item {% if nav.subnavs %}dropdown{% endif %}">
+                        {% if nav.subnavs %}
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown{{ forloop.counter }}" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ nav.name }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown{{ forloop.counter }}">
+                                {% for subnav in nav.subnavs %}
+                                    <li><a class="dropdown-item" href="{{ subnav.link }}">{{ subnav.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <a class="nav-link" href="{{ nav.link }}">{{ nav.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="base-content">
+        {{ page.content | safe }}
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    Awaiting activation
+{% endblock %}
+
+{% block header %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <span class="material-icons" style="font-size:2rem;vertical-align:middle;">verified_user</span>
+                <span class="ms-2">FOSSEE Workshops</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    {% if request.user.profile.is_email_verified %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'workshop_app:view_profile' %}">
+                                <span class="material-icons" style="vertical-align:middle;">person</span> Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'workshop_app:logout' %}">
+                                <span class="material-icons" style="vertical-align:middle;">logout</span> Logout
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block extra %}
+
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .activation-card {
+        max-width: 480px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        animation: fadeIn 0.7s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .activation-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        color: #0d6efd;
+    }
+    .activation-icon {
+        display: block;
+        text-align: center;
+        margin-bottom: 1.2rem;
+        color: #0d6efd;
+        font-size: 3rem;
+    }
+    .activation-message {
+        font-size: 1.1rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 1.2rem;
+    }
+    .activation-link {
+        color: #198754;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+    .alert {
+        margin-bottom: 1rem;
+    }
+    @media (max-width: 576px) {
+        .activation-card {
+            padding: 1.2rem 0.5rem;
+        }
+        .activation-title {
+            font-size: 1.3rem;
+        }
+        .activation-icon {
+            font-size: 2.2rem;
+        }
+    }
+</style>
+<div class="activation-card">
+    {% if status == '2' %}
+        <div class="activation-icon">
+            <span class="material-icons">verified</span>
+        </div>
+        <div class="activation-title">Email Already Verified</div>
+        <div class="activation-message">
+            Your email is already verified.<br>
+            <a class="activation-link" href="{% url 'workshop_app:index' %}">Go to Home</a>
+        </div>
+    {% elif status == '1' %}
+        <script type="text/javascript">
+            window.setTimeout(function () {
+                location.href = "{% url 'workshop_app:register' %}"
+            }, 3000);
+        </script>
+        <div class="activation-icon">
+            <span class="material-icons">error_outline</span>
+        </div>
+        <div class="activation-title">Activation Expired</div>
+        <div class="activation-message">
+            Your activation has expired.<br>
+            Please <a class="activation-link" href="{% url 'workshop_app:register' %}">register again</a>.
+        </div>
+    {% elif status == '0' %}
+        <div class="activation-icon">
+            <span class="material-icons">check_circle</span>
+        </div>
+        <div class="activation-title">Account Activated</div>
+        <div class="activation-message">
+            Your account has been activated.<br>
+            <a class="activation-link" href="{% url 'workshop_app:index' %}">Go to Home</a>
+        </div>
+    {% else %}
+        <script type="text/javascript">
+            window.setTimeout(function () {
+                location.href = "{% url 'workshop_app:logout' %}"
+            }, 5000);
+        </script>
+        <div class="activation-icon">
+            <span class="material-icons">hourglass_top</span>
+        </div>
+        <div class="activation-title">Activation Awaiting</div>
+        <div class="activation-message">
+            The activation link has been sent to your email.<br>
+            The link expires in <strong>24 hours</strong> from registration.<br>
+            You will be logged out automatically.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'workshop_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Add new Workshop type
+{% endblock %}
+
+{% block extra-dependencies %}
+{% endblock %}
+
+{% block extra-custom-scripts %}
+
+    <script src="{% static 'workshop_app/js/jquery.formset.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .edit-workshop-type-card {
+        max-width: 600px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        animation: fadeIn 0.7s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .edit-workshop-type-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        color: #0d6efd;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+    .input-group-text {
+        background: #e9ecef;
+        border-radius: 8px 0 0 8px;
+    }
+    .form-control, textarea {
+        border-radius: 8px;
+    }
+    .text-danger {
+        font-size: 0.95em;
+    }
+    .btn-save {
+        width: 100%;
+        padding: 0.7rem;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1.2rem;
+    }
+    .attachment-section {
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .attachment-title {
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: #198754;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    .attachment-row {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .btn-delete {
+        margin-left: 0.5rem;
+    }
+    @media (max-width: 576px) {
+        .edit-workshop-type-card {
+            padding: 1.2rem 0.5rem;
+        }
+        .edit-workshop-type-title {
+            font-size: 1.3rem;
+        }
+        .attachment-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+<div class="edit-workshop-type-card">
+    <div class="edit-workshop-type-title">
+        <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">edit</span>
+        View / Edit Workshop Type
+    </div>
+    <form method="post" enctype="multipart/form-data" autocomplete="on">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Workshop Name</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">event</span></span>
+                {{ form.name }}
+            </div>
+            <div class="text-danger">{{ form.name.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_duration" class="form-label">Duration</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">timer</span></span>
+                {{ form.duration }}
+            </div>
+            <div class="form-text text-muted">{{ form.duration.help_text }}</div>
+            <div class="text-danger">{{ form.duration.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">description</span></span>
+                {{ form.description }}
+            </div>
+            <div class="text-danger">{{ form.description.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_terms_and_conditions" class="form-label">Terms and Conditions</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">gavel</span></span>
+                {{ form.terms_and_conditions }}
+            </div>
+            <div class="text-danger">{{ form.terms_and_conditions.errors }}</div>
+        </div>
+        <div class="attachment-section">
+            <div class="attachment-title">
+                <span class="material-icons" style="vertical-align:middle;color:#198754;">attach_file</span>
+                Attachments
+            </div>
+            {{ form_file.management_form }}
+            {{ form_file.non_form_errors }}
+            {% for form in form_file %}
+                <div class="attachment-row">
+                    <div class="row">
+                        <div class="col-11">
+                            {% for field in form %}
+                                <div class="col-6">{{ field }}</div>
+                            {% endfor %}
+                        </div>
+                        {% if form.id.value %}
+                        <div class="col-1">
+                            <a href="{% url 'workshop_app:delete_attachment_file' form.id.value %}"><button class="btn btn-md btn-danger btn-delete" type="button"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">delete</span> Delete</button></a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-save">
+            <span class="material-icons" style="vertical-align:middle;">save</span> Save
+        </button>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(".inline.{{ form_file.prefix }}").formset({
+            prefix: "{{ form_file.prefix }}", // The form prefix for your django formset
+            addCssClass: "btn btn-md btn-primary bordered inline-form-add", // CSS class applied to the add link
+            deleteCssClass: "hidden", // CSS class applied to the delete link
+            addText: 'Add another attachment', // Text for the add link
+            deleteText: '',
+            formCssClass: 'inline-form' // CSS class applied to each form in a formset
+        })
+    });
+</script>
+{% endblock %}

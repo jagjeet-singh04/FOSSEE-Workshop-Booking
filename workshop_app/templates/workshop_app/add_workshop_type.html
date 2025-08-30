@@ -1,0 +1,106 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    Add new Workshop type
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .workshop-type-card {
+        max-width: 520px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        animation: fadeIn 0.7s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .workshop-type-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        color: #0d6efd;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+    .input-group-text {
+        background: #e9ecef;
+        border-radius: 8px 0 0 8px;
+    }
+    .form-control, textarea {
+        border-radius: 8px;
+    }
+    .text-danger {
+        font-size: 0.95em;
+    }
+    .btn-create {
+        width: 100%;
+        padding: 0.7rem;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1.2rem;
+    }
+    @media (max-width: 576px) {
+        .workshop-type-card {
+            padding: 1.2rem 0.5rem;
+        }
+        .workshop-type-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+<div class="workshop-type-card">
+    <div class="workshop-type-title">
+        <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">add_circle</span>
+        Add New Workshop Type
+    </div>
+    <form method="post" autocomplete="on">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Workshop Name</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">event</span></span>
+                {{ form.name }}
+            </div>
+            <div class="text-danger">{{ form.name.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_duration" class="form-label">Duration</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">timer</span></span>
+                {{ form.duration }}
+            </div>
+            <div class="form-text text-muted">{{ form.duration.help_text }}</div>
+            <div class="text-danger">{{ form.duration.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">description</span></span>
+                {{ form.description }}
+            </div>
+            <div class="text-danger">{{ form.description.errors }}</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_terms_and_conditions" class="form-label">Terms and Conditions</label>
+            <div class="input-group">
+                <span class="input-group-text"><span class="material-icons" style="font-size:1.2em;">gavel</span></span>
+                {{ form.terms_and_conditions }}
+            </div>
+            <div class="text-danger">{{ form.terms_and_conditions.errors }}</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-create">
+            <span class="material-icons" style="vertical-align:middle;">check_circle</span> Create
+        </button>
+    </form>
+</div>
+{% endblock %}

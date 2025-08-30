@@ -1,0 +1,157 @@
+{% extends "workshop_app/base.html" %}
+{% load static %}
+
+{% block title %}
+    Propose a workshop
+{% endblock %}
+
+{% block extra-dependencies %}
+    <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
+    <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
+{% endblock %}
+
+{% block extra-custom-scripts %}
+    <script>
+        var dateToday = new Date();
+        var upto = new Date();
+
+        dateToday.setDate(dateToday.getDate() + 3);
+        upto.setFullYear(dateToday.getFullYear() + 1);
+
+        $(function () {
+            $(".datepicker").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                minDate: dateToday,
+                maxDate: upto,
+                beforeShowDay: $.datepicker.noWeekends,
+            });
+
+
+            $('#disp_tnc').click(function (e) {
+                e.preventDefault()
+                if ($('#id_workshop_type').val() === '')
+                    $('.modal-body').html("<p class='text-danger'>Please select a workshop type</p>")
+                else {
+                    $.ajax({
+                        url: '/workshop/type_tnc/' + $('#id_workshop_type').val(),
+                        success: function (data) {
+                            $('.modal-body').html(data.tnc)
+                        }
+                    })
+                }
+            })
+        });
+    </script>
+{% endblock %}
+
+
+
+{% block content %}
+<style>
+    .propose-workshop-card {
+        max-width: 520px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        animation: fadeIn 0.7s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .propose-workshop-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        color: #0d6efd;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #333;
+    }
+    .form-control, textarea {
+        border-radius: 8px;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 0.7rem;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1.2rem;
+    }
+    .text-danger {
+        font-size: 0.95em;
+    }
+    .alert-info {
+        font-size: 1.05em;
+        margin-bottom: 1.2rem;
+    }
+    .modal-content {
+        border-radius: 16px;
+    }
+    @media (max-width: 576px) {
+        .propose-workshop-card {
+            padding: 1.2rem 0.5rem;
+        }
+        .propose-workshop-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+<div class="propose-workshop-card">
+    <div class="propose-workshop-title">
+        <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">lightbulb</span>
+        Propose Workshop
+    </div>
+    <div class="alert alert-info">
+        <span class="material-icons" style="vertical-align:middle;color:#0d6efd;">info</span>
+        Note: Before proposing the workshop, please check about the workshop in the <strong>Workshop Types</strong> section
+    </div>
+    <form method="post" autocomplete="on">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_workshop_type" class="form-label">Workshop Type</label>
+            {{ form.workshop_type }}
+        </div>
+        <div class="mb-3">
+            <label for="id_date" class="form-label">Date</label>
+            {{ form.date }}
+        </div>
+        <div class="mb-3">
+            {{ form.tnc_accepted }} I accept the
+            <a href="#" id="disp_tnc" data-toggle="modal" data-target="#exampleModalCenter">terms and conditions</a>
+        </div>
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <span class="material-icons" style="vertical-align:middle;">error_outline</span>
+                <strong>Errors:</strong> {{ form.errors }}
+            </div>
+        {% endif %}
+        <button class="btn btn-success btn-submit" type="submit">
+            <span class="material-icons" style="vertical-align:middle;">send</span> Submit
+        </button>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Terms and Conditions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

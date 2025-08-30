@@ -1,0 +1,74 @@
+{% extends "workshop_app/base.html" %}
+
+{% block title %}
+	Edit Profile
+{% endblock %}
+
+
+{% block content %}
+<style>
+  .edit-profile-card {
+    max-width: 520px;
+    margin: 60px auto 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 2.5rem 2rem;
+    animation: fadeIn 0.7s;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .edit-profile-title {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    color: #0d6efd;
+  }
+  .form-label {
+    font-weight: 500;
+    color: #333;
+  }
+  .form-control, textarea {
+    border-radius: 8px;
+  }
+  .btn-save {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 1.2rem;
+  }
+  .text-danger {
+    font-size: 0.95em;
+  }
+  @media (max-width: 576px) {
+    .edit-profile-card {
+      padding: 1.2rem 0.5rem;
+    }
+    .edit-profile-title {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+<div class="edit-profile-card">
+  <div class="edit-profile-title">
+    <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">edit</span>
+    Edit Profile
+  </div>
+  <form action="{{URL_ROOT}}/edit_profile/" method="post" autocomplete="on">
+    {% csrf_token %}
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        {{ form.as_table }}
+      </table>
+    </div>
+    <button class="btn btn-primary btn-save" type="submit">
+      <span class="material-icons" style="vertical-align:middle;">save</span> Save Profile
+    </button>
+  </form>
+</div>
+{% endblock %}

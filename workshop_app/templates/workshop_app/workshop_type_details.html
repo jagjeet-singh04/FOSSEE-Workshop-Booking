@@ -1,0 +1,69 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    View Workshop details
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .workshop-type-details-card {
+        max-width: 520px;
+        margin: 60px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        padding: 2.5rem 2rem;
+        animation: fadeIn 0.7s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .workshop-type-title {
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        color: #0d6efd;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+        font-size: 1.05em;
+    }
+    @media (max-width: 576px) {
+        .workshop-type-details-card {
+            padding: 1.2rem 0.5rem;
+        }
+        .workshop-type-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+<div class="workshop-type-details-card">
+    <div class="workshop-type-title">
+        <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">category</span>
+        Workshop Details
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th>Workshop Name</th>
+            <td>{{ workshop_type.name }}</td>
+        </tr>
+        <tr>
+            <th>Duration</th>
+            <td>{{ workshop_type.duration }} day(s)</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ workshop_type.description }}</td>
+        </tr>
+        <tr>
+            <th>Terms and Conditions</th>
+            <td>{{ workshop_type.terms_and_conditions }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+
+
