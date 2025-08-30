@@ -7,82 +7,191 @@
 
 {% block content %}
 <style>
-  .edit-profile-card {
-    max-width: 520px;
-    margin: 60px auto 0 auto;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-    padding: 2.5rem 2rem;
-    animation: fadeIn 0.7s;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .edit-profile-title {
-    font-weight: 700;
-    font-size: 2rem;
-    margin-bottom: 1.2rem;
-    text-align: center;
-    color: #0d6efd;
-  }
-  .form-label {
-    font-weight: 500;
-    color: #333;
-  }
-  .form-control, textarea {
-    border-radius: 8px;
-  }
-  .btn-save {
-    width: 100%;
-    padding: 0.7rem;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    margin-top: 1.2rem;
-  }
-  .text-danger {
-    font-size: 0.95em;
-  }
-  @media (max-width: 576px) {
-    .edit-profile-card {
-      padding: 1.2rem 0.5rem;
+    /* Use the same modern CSS as view_profile.html for consistency */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --primary-color: #667eea;
+        --primary-light: #8b9ff5;
+        --primary-dark: #4c63d2;
+        --accent-color: #764ba2;
+        --surface-color: #ffffff;
+        --surface-elevated: #f8fafc;
+        --background-color: #f1f5f9;
+        --error-color: #ef4444;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
+        --border-light: #e2e8f0;
+        --border-medium: #cbd5e1;
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --radius-xl: 20px;
+        --radius-md: 12px;
+        --transition-normal: 0.3s ease;
     }
-    .edit-profile-title {
-      font-size: 1.3rem;
+    body {
+        background: var(--background-color);
+        color: var(--text-primary);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
-  }
+    .profile-header {
+        background: var(--primary-gradient);
+        padding: 2rem 1rem 3rem;
+        text-align: center;
+        color: white;
+        margin-bottom: -2rem;
+    }
+    .profile-title {
+        font-size: 2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    .profile-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+    .profile-card {
+        background: var(--surface-color);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-xl);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-light);
+        padding: 2rem 1.5rem;
+    }
+    .card-header {
+        margin-bottom: 1.2rem;
+    }
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    .form-label {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        background: white;
+        font-family: inherit;
+        transition: border-color var(--transition-normal);
+    }
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background var(--transition-normal);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+    }
+    .btn-primary {
+        background: var(--primary-gradient);
+        color: white;
+    }
+    .btn-secondary {
+        background: white;
+        color: var(--primary-color);
+        border: 1.5px solid var(--primary-color);
+    }
+    .btn-primary:hover, .btn-secondary:hover {
+        opacity: 0.9;
+    }
+    .alert-error {
+        background: #fef2f2;
+        color: var(--error-color);
+        border-left: 4px solid var(--error-color);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    @media (max-width: 576px) {
+        .profile-card {
+            padding: 1rem 0.5rem;
+        }
+        .profile-title {
+            font-size: 1.3rem;
+        }
+    }
 </style>
-<div class="edit-profile-card">
-  <div class="edit-profile-title">
-    <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">edit</span>
-    Edit Profile
-  </div>
-  <form action="{% url 'workshop_app:edit_profile' %}" method="post" autocomplete="on" aria-label="Edit Profile">
-    {% csrf_token %}
-    {% if form.errors %}
-      {% for field in form %}
-        {% for error in field.errors %}
-          <div class="alert alert-danger" role="alert" aria-live="assertive">
-            <strong>{{field.label}} : {{ error|escape }}</strong>
-          </div>
-        {% endfor %}
-      {% endfor %}
-      {% for error in form.non_field_errors %}
-        <div class="alert alert-danger" role="alert" aria-live="assertive">
-          <strong>{{ error|escape }}</strong>
+<header class="profile-header">
+    <h1 class="profile-title">
+        <span class="material-icons-round" aria-hidden="true">edit</span>
+        Edit Profile
+    </h1>
+</header>
+<main class="profile-container">
+    <div class="profile-card">
+        <div class="card-header">
+            <h2 class="card-title"><span class="material-icons-round">edit</span>Update Profile Information</h2>
         </div>
-      {% endfor %}
-    {% endif %}
-    <div class="table-responsive">
-      <table class="table table-bordered align-middle" role="table" aria-label="Edit Profile Form">
-        {{ form.as_table }}
-      </table>
+        <div class="card-content">
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert-error"><span class="material-icons-round">error</span><strong>{{field.label}} : {{ error|escape }}</strong></div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert-error"><span class="material-icons-round">error</span><strong>{{ error|escape }}</strong></div>
+                {% endfor %}
+            {% endif %}
+            <form action="" method="post" autocomplete="on">
+                {% csrf_token %}
+                <div class="info-grid">
+                    <div class="form-group">{{form.title}}</div>
+                    <div class="form-group">{{form.first_name}}</div>
+                    <div class="form-group">{{form.last_name}}</div>
+                    <div class="form-group">{{form.phone_number}}</div>
+                    <div class="form-group">{{form.institute}}</div>
+                    <div class="form-group">{{form.department}}</div>
+                    <div class="form-group">{{form.position}}</div>
+                    <div class="form-group">{{form.location}}</div>
+                    <div class="form-group">{{form.state}}</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full"><span class="material-icons-round">save</span>Update Profile</button>
+                <a href="{% url 'workshop_app:index' %}" class="btn btn-secondary btn-full"><span class="material-icons-round">close</span>Cancel</a>
+            </form>
+        </div>
     </div>
-    <button class="btn btn-primary btn-save" type="submit" aria-label="Save Profile">
-      <span class="material-icons" style="vertical-align:middle;">save</span> Save Profile
-    </button>
-  </form>
-</div>
+</main>
 {% endblock %}
