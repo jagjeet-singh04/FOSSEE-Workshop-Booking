@@ -129,15 +129,29 @@
                 {% if user.is_authenticated %}
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="material-icons" style="vertical-align: middle">account_circle</span>
-                            <span style="display: inline; vertical-align: middle">{{user.get_full_name|title}}</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{% url 'workshop_app:view_own_profile' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">person</span> Profile</a>
-                            <a class="dropdown-item" href="{% url 'workshop_app:logout' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">logout</span> Logout</a>
-                        </div>
-                    </li>
+    <a class="nav-link dropdown-toggle text-white"
+       href="#"
+       id="navbarDropdown"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+       <span class="material-icons" style="vertical-align: middle">account_circle</span>
+       <span style="display: inline; vertical-align: middle">{{user.get_full_name|title}}</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+        <li>
+            <a class="dropdown-item" href="{% url 'workshop_app:view_own_profile' %}">
+                <span class="material-icons" style="vertical-align:middle;font-size:1.1em;">person</span> Profile
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'workshop_app:logout' %}">
+                <span class="material-icons" style="vertical-align:middle;font-size:1.1em;">logout</span> Logout
+            </a>
+        </li>
+    </ul>
+</li>
+
                 </ul>
                 {% endif %}
             </div>
@@ -212,22 +226,6 @@
             document.head.appendChild(script);
             window.chartJsLoaded = true;
         }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var dropdownToggle = document.getElementById('navbarDropdown');
-      if (dropdownToggle) {
-        dropdownToggle.addEventListener('click', function(e) {
-          // Only trigger if not already handled by Bootstrap
-          if (!this.classList.contains('show')) {
-            e.preventDefault();
-            var dropdownMenu = this.nextElementSibling;
-            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
-              dropdownMenu.classList.toggle('show');
-            }
-          }
-        });
-      }
     });
 </script>
 

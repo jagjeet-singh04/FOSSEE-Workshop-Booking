@@ -1,123 +1,127 @@
-
 {% extends 'workshop_app/base.html' %}
 
 {% block title %} Statistics {% endblock %}
 
 {% block content %}
-{% load static %}
 <style>
-    .stats-sidebar {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        padding: 1.5rem 1rem;
-        margin-bottom: 2rem;
+    /* --- General Enhancements --- */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
     }
-    .stats-sidebar h3 {
-        font-weight: 700;
-        color: #0d6efd;
-        margin-bottom: 1.2rem;
+    .card-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        color: white;
+        border-radius: 12px 12px 0 0 !important;
+        padding: 12px 16px;
     }
-    .stats-sidebar .btn-outline-info {
-        border-radius: 8px;
-        font-weight: 500;
+    .card-header h3 {
+        font-size: 1.2rem;
+        margin: 0;
     }
-    .stats-card {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        padding: 2rem;
-        margin-bottom: 2rem;
+    .table-responsive-sm {
+        border-radius: 10px;
+        overflow-x: auto; /* Mobile table scrolling */
     }
-    .table th, .table td {
+    table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    table td {
         vertical-align: middle;
     }
-    .table thead th {
-        background: #f1f3f4;
-        font-weight: 600;
+
+    /* --- Mobile-first buttons --- */
+    #state_graph, #type_graph {
+        width: 100%;
+        margin-top: 8px;
     }
-    .table-hover tbody tr:hover {
-        background: #e9ecef;
+
+    @media (min-width: 768px) {
+        #state_graph, #type_graph {
+            width: auto;
+            margin-top: 0;
+        }
     }
-    .chart-btns {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-        margin-bottom: 1rem;
+
+    /* --- Dialog/Chart Enhancements --- */
+    #dialog {
+        overflow: hidden;
     }
-    @media (max-width: 768px) {
-        .stats-card {
-            padding: 1rem;
-        }
-        .stats-sidebar {
-            padding: 1rem 0.5rem;
-        }
-        .chart-btns {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+    #myChart {
+        width: 100% !important;
+        height: 100% !important;
     }
 </style>
+
 <div class="container-fluid">
     <div class="row">
+        <!-- Filters Section -->
         <div class="col-md-3 mb-3">
             <form method="GET">
-                <div class="stats-sidebar">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h3><span class="material-icons" style="vertical-align:middle;">filter_alt</span> Filters</h3>
-                        <a href="{% url 'statistics_app:public' %}" class="btn btn-outline-info">
-                            <span class="material-icons" style="vertical-align:middle;">clear</span> Clear
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3><u>Filters</u></h3>
+                        <a href="{% url 'statistics_app:public' %}" class="btn btn-sm btn-light">
+                            <i class="fa fa-times"></i>&nbsp;Clear
                         </a>
                     </div>
-                    <div class="mb-3">From date: {{form.from_date}}</div>
-                    <div class="mb-3">To date: {{form.to_date}}</div>
-                    <div class="mb-3">Workshop: {{form.workshop_type}}</div>
-                    <div class="mb-3">State: {{form.state}}</div>
-                    <div class="mb-3">{{form.sort.help_text}}: {{form.sort}}</div>
-                    {% if request.user.is_authenticated %}
-                    <div class="mb-3">{{form.show_workshops.help_text}}: {{form.show_workshops}}</div>
-                    {% endif %}
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="submit" class="btn btn-success flex-fill">
-                            <span class="material-icons" style="vertical-align:middle;">visibility</span> View
-                        </button>
-                        <button type="submit" class="btn btn-info flex-fill" name="download" value="download">
-                            <span class="material-icons" style="vertical-align:middle;">download</span> Download
-                        </button>
+                    <div class="card-body">
+                        <div class="mb-2">From date: {{form.from_date}}</div>
+                        <div class="mb-2">To date: {{form.to_date}}</div>
+                        <div class="mb-2">Workshop: {{form.workshop_type}}</div>
+                        <div class="mb-2">State: {{form.state}}</div>
+                        <div class="mb-2">{{form.sort.help_text}}: {{form.sort}}</div>
+                        {% if request.user.is_authenticated %}
+                        <div class="mb-2">{{form.show_workshops.help_text}}: {{form.show_workshops}}</div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-success flex-fill me-2">
+                                <i class="fa fa-eye"></i>&nbsp;View
+                            </button>
+                            <button type="submit" class="btn btn-info flex-fill" name="download" value="download">
+                                <i class="fa fa-download"></i>&nbsp;Download
+                            </button>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
+
+        <!-- Data Section -->
         <div class="col">
-            <div class="stats-card">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        {% include "statistics_app/paginator.html" %}
-                    </div>
-                    <div class="col-md-6 chart-btns">
-                        <button class="btn btn-info" id="state_graph">
-                            <span class="material-icons" style="vertical-align:middle;">bar_chart</span> State chart
-                        </button>
-                        <button class="btn btn-info" id="type_graph">
-                            <span class="material-icons" style="vertical-align:middle;">bar_chart</span> Workshops chart
-                        </button>
-                    </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {% include "statistics_app/paginator.html" %}
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Sr No.</th>
-                                <th>Coordinator Name</th>
-                                <th>Institute Name</th>
-                                <th>Instructor Name</th>
-                                <th>Workshop Name</th>
-                                <th>Workshop Date</th>
-                            </tr>
-                        </thead>
-                        {% csrf_token %}
+                <div class="col-md-6 text-md-end text-center">
+                    <button class="btn btn-info me-2" id="state_graph">
+                        <i class="fa fa-bar-chart"></i>&nbsp;State chart
+                    </button>
+                    <button class="btn btn-info" id="type_graph">
+                        <i class="fa fa-bar-chart"></i>&nbsp;Workshops chart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Responsive Table -->
+            <div class="table-responsive-sm">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sr No.</th>
+                            <th>Coordinator Name</th>
+                            <th>Institute Name</th>
+                            <th>Instructor Name</th>
+                            <th>Workshop Name</th>
+                            <th>Workshop Date</th>
+                        </tr>
+                    </thead>
+                    {% csrf_token %}
+                    {% for workshop in objects %}
                         <tbody>
-                        {% for workshop in objects %}
                             <tr>
                                 <td>{{ forloop.counter0|add:objects.start_index}}</td>
                                 <td>{{ workshop.coordinator.get_full_name | capfirst }}</td>
@@ -126,55 +130,39 @@
                                 <td>{{ workshop.workshop_type.name }}</td>
                                 <td>{{ workshop.date | date}}</td>
                             </tr>
-                        {% endfor %}
                         </tbody>
-                    </table>
-                </div>
-                {% include "statistics_app/paginator.html" %}
+                    {% endfor %}
+                </table>
             </div>
+            {% include "statistics_app/paginator.html" %}
         </div>
     </div>
 </div>
 
-<!-- The Modal -->
+<!-- Modal for Chart -->
 <div id="dialog" title="Workshops Statistics">
     <canvas id="myChart"></canvas>
 </div>
-<script src="{% static 'workshop_app/js/chart.min.js' %}"></script>
-<script id="ws-states-data" type="application/json">{{ ws_states|json_script:"ws-states-data" }}</script>
-<script id="ws-count-data" type="application/json">{{ ws_count|json_script:"ws-count-data" }}</script>
-<script id="ws-type-data" type="application/json">{{ ws_type|json_script:"ws-type-data" }}</script>
-<script id="ws-type-count-data" type="application/json">{{ ws_type_count|json_script:"ws-type-count-data" }}</script>
-<script type="text/javascript">
-    var state_labels = JSON.parse(document.getElementById('ws-states-data').textContent);
-    var state_data = JSON.parse(document.getElementById('ws-count-data').textContent);
-    var type_labels = JSON.parse(document.getElementById('ws-type-data').textContent);
-    var type_data = JSON.parse(document.getElementById('ws-type-count-data').textContent);
+
+<script type="application/json" id="ws_states_json">{{ ws_states|safe }}</script>
+<script type="application/json" id="ws_count_json">{{ ws_count|safe }}</script>
+<script type="application/json" id="ws_type_json">{{ ws_type|safe }}</script>
+<script type="application/json" id="ws_type_count_json">{{ ws_type_count|safe }}</script>
+<script>
+    var state_labels = JSON.parse(document.getElementById('ws_states_json').textContent);
+    var state_data = JSON.parse(document.getElementById('ws_count_json').textContent);
+    var type_labels = JSON.parse(document.getElementById('ws_type_json').textContent);
+    var type_data = JSON.parse(document.getElementById('ws_type_count_json').textContent);
     var chart;
-    $(function() {
-        // Initialize dialog (hidden by default)
-        $("#dialog").dialog({
-            autoOpen: false,
-            width: 900,
-            height: 500
-        });
-        $("#state_graph").on("click", function() {
-            if (state_labels.length === 0 || state_data.length === 0) {
-                alert("No state-wise workshop data available.");
-                return;
-            }
-            show_graph(state_labels, state_data, "State wise workshops");
-        });
-        $("#type_graph").on("click", function() {
-            if (type_labels.length === 0 || type_data.length === 0) {
-                alert("No workshop type data available.");
-                return;
-            }
-            show_graph(type_labels, type_data, "Type wise workshops");
-        });
+
+    $("#state_graph").on("click", function() {
+        show_graph(state_labels, state_data, "State wise workshops");
+    });
+    $("#type_graph").on("click", function() {
+        show_graph(type_labels, type_data, "Type wise workshops");
     });
 
-    function show_graph(labels, data, graph_name, chart_name) {
+    function show_graph(labels, data, graph_name) {
         var ctx = document.getElementById('myChart').getContext('2d');
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
@@ -184,35 +172,21 @@
                 datasets: [{
                     data: data,
                     label: graph_name,
-                    backgroundColor: 'rgba(13,110,253,0.7)',
+                    backgroundColor: 'rgba(13,110,253,0.6)',
                     borderColor: 'rgba(13,110,253,1)',
-                    borderWidth: 2,
-                    borderRadius: 6,
-                    hoverBackgroundColor: 'rgba(13,110,253,1)',
-                    hoverBorderColor: 'rgba(13,110,253,1)'
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#0d6efd', font: { weight: 'bold' } }
-                    },
-                    y: {
-                        grid: { color: '#e9ecef' },
-                        ticks: { color: '#333' }
-                    }
-                }
+                maintainAspectRatio: false
             }
         });
-        $("#dialog").dialog("open");
+        $("#dialog").dialog({
+            width: "90%",
+            height: 500,
+            modal: true
+        });
     }
 </script>
 
