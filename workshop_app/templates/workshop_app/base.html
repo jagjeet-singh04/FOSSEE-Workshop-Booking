@@ -13,7 +13,13 @@
     <script src="{% static 'workshop_app/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'workshop_app/js/popper.min.js' %}"></script>
     <script src="{% static 'workshop_app/js/toastr.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    
+    <!-- Load Chart.js from CDN with safety check -->
+    {% if not chart_js_loaded %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>window.chartJsLoaded = true;</script>
+    {% endif %}
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     {% block extra-dependencies %}{% endblock %}
     <link rel="stylesheet" href="{% static 'workshop_app/css/bootstrap.min.css' %}">
@@ -129,9 +135,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{% url 'workshop_app:view_own_profile' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">person</span> Profile</a>
-                            <a class="dropdown-item" href="{% url 'password_change' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">lock</span> Change Password</a>
                             <a class="dropdown-item" href="{% url 'workshop_app:logout' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">logout</span> Logout</a>
-                            <a class="dropdown-item" href="{% url 'workshop_app:edit_profile' %}"><span class="material-icons" style="vertical-align:middle;font-size:1.1em;">edit</span> Edit Profile</a>
                         </div>
                     </li>
                 </ul>
@@ -151,18 +155,95 @@
     <script id="django-messages" type="application/json">
         [
         {% for message in messages %}
-            {"tag": "{{ message.tags|default:'info' }}", "text": "{{ message|escapejs }}"}{% if not forloop.last %},{% endif %}
+            {
+                "tag": "{{ message.tags|default:'info' }}", 
+                "text": "{{ message|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
         {% endfor %}
         ]
     </script>
     <script>
-        var djangoMessages = JSON.parse(document.getElementById('django-messages').textContent);
-        djangoMessages.forEach(function(msg) {
-            toastr[msg.tag](msg.text);
-        });
+        (function() {
+            try {
+                var messageElement = document.getElementById('django-messages');
+                if (messageElement) {
+                    var messageText = messageElement.textContent;
+                    // Remove any non-JSON content that might have been injected
+                    messageText = messageText.trim();
+                    
+                    // Check if it's valid JSON
+                    if (messageText.startsWith('[') || messageText.startsWith('{')) {
+                        var djangoMessages = JSON.parse(messageText);
+                        if (Array.isArray(djangoMessages)) {
+                            djangoMessages.forEach(function(msg) {
+                                if (msg.tag && msg.text) {
+                                    // Map Django message tags to toastr types
+                                    var toastrType = msg.tag;
+                                    if (msg.tag === 'error') toastrType = 'error';
+                                    if (msg.tag === 'success') toastrType = 'success';
+                                    if (msg.tag === 'warning') toastrType = 'warning';
+                                    if (msg.tag === 'info') toastrType = 'info';
+                                    
+                                    toastr[toastrType](msg.text);
+                                }
+                            });
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error processing messages:', e);
+            }
+        })();
     </script>
+    {% for message in messages %}
+    <script>
+        toastr['{{ message.tags|default:"info" }}']('{{ message|escapejs }}');
+    </script>
+    {% endfor %}
 {% endif %}
 
+<script>
+    // Ensure Chart.js is available
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Chart === 'undefined' && !window.chartJsLoaded) {
+            console.warn('Chart.js not loaded, loading from CDN');
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js';
+            document.head.appendChild(script);
+            window.chartJsLoaded = true;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var dropdownToggle = document.getElementById('navbarDropdown');
+      if (dropdownToggle) {
+        dropdownToggle.addEventListener('click', function(e) {
+          // Only trigger if not already handled by Bootstrap
+          if (!this.classList.contains('show')) {
+            e.preventDefault();
+            var dropdownMenu = this.nextElementSibling;
+            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+              dropdownMenu.classList.toggle('show');
+            }
+          }
+        });
+      }
+    });
+</script>
+
+<!-- Ensure Bootstrap 5 JS is loaded for navbar toggler -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Robust toggler for Bootstrap navbar
+$(document).ready(function() {
+    var $navbarToggler = $('.navbar-toggler');
+    var $navbarCollapse = $('#navbarSupportedContent');
+    $navbarToggler.on('click', function() {
+        $navbarCollapse.collapse('toggle');
+    });
+});
+</script>
 </body>
 <footer class="footer mt-auto">
     {% block footer %}
@@ -173,3 +254,4 @@
     {% endblock %}
 </footer>
 </html>
+{% block extra-content %}{% endblock %}
