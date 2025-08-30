@@ -4,13 +4,6 @@ from django.forms import inlineformset_factory, model_to_dict
 from django.http import JsonResponse, Http404
 from django.urls import reverse
 
-try:
-    from StringIO import StringIO as string_io
-except ImportError:
-    from io import BytesIO as string_io
-from datetime import datetime
-import os
-
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -27,6 +20,9 @@ from .models import (
     WorkshopType, AttachmentFile
 )
 from .send_mails import send_email
+
+from datetime import datetime
+import os
 
 
 __author__ = "Akshen Doke"
@@ -500,3 +496,27 @@ def view_own_profile(request):
 
     return render(request, "workshop_app/view_profile.html",
                   {"profile": profile, "Workshops": None, "form": form})
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if user.is_superuser:
+        return redirect("admin")
+    profile = user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, user=user, instance=profile)
+        if form.is_valid():
+            form_data = form.save(commit=False)
+            form_data.user = user
+            form_data.user.first_name = request.POST.get('first_name', user.first_name)
+            form_data.user.last_name = request.POST.get('last_name', user.last_name)
+            form_data.user.save()
+            form_data.save()
+            messages.success(request, "Profile updated.")
+            return redirect(reverse("workshop_app:view_own_profile"))
+        else:
+            messages.error(request, "Profile update failed!")
+    else:
+        form = ProfileForm(user=user, instance=profile)
+    return render(request, "workshop_app/edit_profile.html", {"form": form, "profile": profile})

@@ -38,4 +38,5 @@ urlpatterns = [
     path('types/', views.workshop_type_list, name='workshop_type_list'),
     path('view_profile/', views.view_own_profile, name='view_own_profile'),
     re_path(r'^view_profile/(?P<user_id>\d+)$', views.view_profile, name='view_profile'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]

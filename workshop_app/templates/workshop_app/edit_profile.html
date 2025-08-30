@@ -59,14 +59,28 @@
     <span class="material-icons" style="vertical-align:middle;font-size:2rem;color:#0d6efd;">edit</span>
     Edit Profile
   </div>
-  <form action="{{URL_ROOT}}/edit_profile/" method="post" autocomplete="on">
+  <form action="{% url 'workshop_app:edit_profile' %}" method="post" autocomplete="on" aria-label="Edit Profile">
     {% csrf_token %}
+    {% if form.errors %}
+      {% for field in form %}
+        {% for error in field.errors %}
+          <div class="alert alert-danger" role="alert" aria-live="assertive">
+            <strong>{{field.label}} : {{ error|escape }}</strong>
+          </div>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger" role="alert" aria-live="assertive">
+          <strong>{{ error|escape }}</strong>
+        </div>
+      {% endfor %}
+    {% endif %}
     <div class="table-responsive">
-      <table class="table table-bordered align-middle">
+      <table class="table table-bordered align-middle" role="table" aria-label="Edit Profile Form">
         {{ form.as_table }}
       </table>
     </div>
-    <button class="btn btn-primary btn-save" type="submit">
+    <button class="btn btn-primary btn-save" type="submit" aria-label="Save Profile">
       <span class="material-icons" style="vertical-align:middle;">save</span> Save Profile
     </button>
   </form>
