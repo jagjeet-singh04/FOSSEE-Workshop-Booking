@@ -111,7 +111,6 @@ http://127.0.0.1:8000/
 
 ## Visual Showcase
 
-
 ### Before vs After
 - **Before:**
   - Minimal, non-responsive UI
@@ -122,7 +121,15 @@ http://127.0.0.1:8000/
   - Accessible forms, tables, and navigation
   - Interactive charts and notifications
 
-👉 (If deployed, insert demo link here)
+
+**Before:**
+![Before Screenshot 1](docs/before-1.png)
+![Before Screenshot 2](docs/before-2.png)
+
+**After:**
+![After Screenshot 1](docs/after-1.png)
+![After Screenshot 2](docs/after-2.png)
+
 
 ## Submission Checklist
 - Clean, readable, well-structured code
